@@ -2,6 +2,7 @@
 	"name": "HWSS",
 	"columns": 7,
 	"rows": 5,
+	"padding": 50,
 	"array": [
 		{ "x": 3, "y": 0 },
 		{ "x": 4, "y": 0 },

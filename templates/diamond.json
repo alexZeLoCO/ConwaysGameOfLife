@@ -2,6 +2,7 @@
 	"name": "DIAMOND",
 	"columns": 12,
 	"rows": 9,
+	"padding": 20,
 	"array": [
 		{ "x": 4, "y": 0 },
 		{ "x": 5, "y": 0 },
