@@ -3,6 +3,7 @@
 
 struct struct_board
 {
+	int padding;
 	int* cells;
 	int n_rows;
 	int n_columns;
@@ -14,7 +15,7 @@ struct struct_board
 #define POPULATED 1
 
 
-board* new_board (int n_rows, int n_columns);
+board* new_board (int padding, int n_rows, int n_columns);
 void show_board (board* the_board);
 board* set_cell (board* the_board, int target_column, int target_row, int to_be_placed);
 board* copy_board(board* the_board);
