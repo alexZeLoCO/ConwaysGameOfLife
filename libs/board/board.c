@@ -45,3 +45,11 @@ board* copy_board (board* the_board)
 	return out_board;
 }
 
+board* copy_board_into (board* the_board, board* dst_board)
+{
+	dst_board = new_board(the_board->n_rows, the_board->n_columns);
+	int board_size = the_board->n_rows * the_board->n_columns;
+	for (int i = 0 ; i < board_size ; i++) *(dst_board->cells+i) = *(the_board->cells+i);
+	return dst_board;
+}
+

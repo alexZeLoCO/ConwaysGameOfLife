@@ -69,7 +69,7 @@ board* get_from_template (template name)
     case GGG: return get_from_file("templates/ggg.json");
     case SGG: return get_from_file("templates/sgg.json");
     case PENTOMINO: return get_from_file("templates/pentomino.json");
-    case DIEHARD: return get_from_file("templates/diaehard.json");
+    case DIEHARD: return get_from_file("templates/diehard.json");
     case DIAMOND: return get_from_file("templates/diamond.json");
   }
 }

@@ -18,5 +18,6 @@ board* new_board (int n_rows, int n_columns);
 void show_board (board* the_board);
 board* set_cell (board* the_board, int target_column, int target_row, int to_be_placed);
 board* copy_board(board* the_board);
+board* copy_board_into(board* the_board, board* dst_board);
 
 #endif
