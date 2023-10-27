@@ -18,6 +18,7 @@ board* get_from_file (char* filename)
   fread(json_data, 1, file_size, file);
   json_data[file_size] = '\0';
   fclose(file);
+  // free(file);
 
   // Parse the JSON data
   json_error_t json_error;
@@ -29,9 +30,10 @@ board* get_from_file (char* filename)
 	// Extract values from the JSON object
   const char *name = json_string_value(json_object_get(root, "name"));
 
+  // One row and column on each side is added for padding
 	out = new_board(
-      json_integer_value(json_object_get(root, "rows")),
-      json_integer_value(json_object_get(root, "columns"))
+      json_integer_value(json_object_get(root, "rows"))+2,
+      json_integer_value(json_object_get(root, "columns"))+2
   );
 
   json_t *array = json_object_get(root, "array");
@@ -39,9 +41,10 @@ board* get_from_file (char* filename)
 
   for (size_t i = 0; i < array_size; i++) {
     json_t *item = json_array_get(array, i);
+    // One row and column is added to compensate the padding
     set_cell(out,
-      json_integer_value(json_object_get(item, "y")),
-      json_integer_value(json_object_get(item, "x")),
+      json_integer_value(json_object_get(item, "x"))+1,
+      json_integer_value(json_object_get(item, "y"))+1,
       POPULATED
     );
   }
@@ -52,7 +55,7 @@ board* get_from_file (char* filename)
   return out;
 }
 
-board* get_from_name (template name)
+board* get_from_template (template name)
 {
   switch(name)
   {
@@ -70,4 +73,22 @@ board* get_from_name (template name)
     case DIAMOND: return get_from_file("templates/diamond.json");
   }
 }
+
+template get_template_from_name (char* name)
+{
+  if (strcmp(name, "BLINKER") == 0) return BLINKER;
+  if (strcmp(name, "BEACON") == 0) return BEACON;
+  if (strcmp(name, "TOAD") == 0) return TOAD;
+  if (strcmp(name, "GLIDER") == 0) return GLIDER;
+  if (strcmp(name, "LWSS") == 0) return LWSS;
+  if (strcmp(name, "MWSS") == 0) return MWSS;
+  if (strcmp(name, "HWSS") == 0) return HWSS;
+  if (strcmp(name, "GGG") == 0) return GGG;
+  if (strcmp(name, "SGG") == 0) return SGG;
+  if (strcmp(name, "PENTOMINO") == 0) return PENTOMINO;
+  if (strcmp(name, "DIEHARD") == 0) return DIEHARD;
+  if (strcmp(name, "DIAMOND") == 0) return DIAMOND;
+  return BLINKER;
+}
+
 

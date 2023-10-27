@@ -2,6 +2,7 @@
 #define FACTORY_H
 
 #include <jansson.h>
+#include <string.h>
 
 #include "../../board/board.h"
 #include "../../error/error.h"
@@ -25,5 +26,6 @@ enum Enum_Template {
 
 board* get_from_template(template the_template);
 board* get_from_file(char* filename);
+template get_template_from_name(char* name);
 
 #endif

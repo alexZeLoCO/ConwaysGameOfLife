@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "logic.h"
-#include "../../error/error.h"
 
 board* run_iteration (board* the_board)
 {
@@ -36,11 +35,20 @@ int neighbors (board* the_board, int cell_idx)
 		below_right_cell_idx = below_cell_idx + 1;
 
 	// We check if the previous cells are legal or not
+	// SUGGESTION: Do not touch this unless strictly necessary
 	int 
-		exists_left_cell = is_multiple_of(cell_idx, the_board->n_columns+1),
-		exists_right_cell = is_multiple_of(cell_idx, the_board->n_columns-1),
-		exists_above_cell = above_cell_idx >= 0,
-		exists_below_cell = below_cell_idx < the_board->n_columns * the_board->n_rows;
+		exists_left_cell  =
+			left_cell_idx >= 0 &&
+			!is_multiple_of(cell_idx, the_board->n_columns),
+		exists_right_cell =
+			right_cell_idx < the_board->n_columns*the_board->n_rows &&
+			!is_multiple_of(cell_idx+1, the_board->n_columns),
+		exists_above_cell =
+			above_cell_idx >= 0,
+		exists_below_cell =
+			below_cell_idx < the_board->n_columns * the_board->n_rows;
+
+	// printf("Existing neighbors of %d:\n\tLeft:%d\tRight:%d\n\tAbove:%d\tBelow:%d\n", cell_idx, exists_left_cell, exists_right_cell, exists_above_cell, exists_below_cell);
 
 	if (exists_above_cell) {		// Check if above cell exists
 		neighbor_count += *(the_board->cells+above_cell_idx); 
@@ -57,11 +65,7 @@ int neighbors (board* the_board, int cell_idx)
 
 	/*
 	printf(
-		"Neighbors of %d (
-			%d(%d), %d(%d), %d(%d),
-			%d(%d), %d(%d), %d(%d),
-			%d(%d), %d(%d), %d(%d)
-		): %d\n",
+		"Neighbors of %d (cellIdx(value)) (%d(%d), %d(%d), %d(%d), %d(%d), (self), %d(%d), %d(%d), %d(%d), %d(%d)): %d\n",
 		cell_idx,
 		above_left_cell_idx,
 		*(the_board->cells+above_left_cell_idx),
@@ -73,10 +77,10 @@ int neighbors (board* the_board, int cell_idx)
 		*(the_board->cells+left_cell_idx),
 		right_cell_idx,
 		*(the_board->cells+right_cell_idx),
-		below_cell_idx,
-		*(the_board->cells+below_cell_idx),
 		below_left_cell_idx,
 		*(the_board->cells+below_left_cell_idx),
+		below_cell_idx,
+		*(the_board->cells+below_cell_idx),
 		below_right_cell_idx,
 		*(the_board->cells+below_right_cell_idx),
 		neighbor_count
@@ -88,6 +92,7 @@ int neighbors (board* the_board, int cell_idx)
 
 int is_multiple_of (int a, int b)
 {
+	if (b == 0) return 1 == 0; // Not multiple
 	return a % b == 0;
 }
 
@@ -106,10 +111,13 @@ board* loop (board* the_board, int iterations)
 	int current_iteration = 1;
 	do {
 		printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
+		free(prev_board);
 		show_board(the_board);
 		prev_board = copy_board(the_board);
 		the_board = run_iteration(prev_board);	
 	} while (current_iteration++ != iterations && is_different(the_board, prev_board));
+	printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
+	show_board(the_board);
 	return the_board;
 }
 
