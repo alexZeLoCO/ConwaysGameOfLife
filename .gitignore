@@ -54,5 +54,8 @@ dkms.conf
 # Main file
 main
 
+# Output files (images and gifs)
 output/
 *.ppm
+*.gif
+
