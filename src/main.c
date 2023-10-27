@@ -13,7 +13,7 @@ template parse_args (int argc, char** argv)
 int main (int argc, char** argv)
 {
 	board* my_board = get_from_template(parse_args(argc, argv));
-	loop(my_board, 10);
+	loop(my_board, atoi(*(argv+2)));
 	free(my_board);
 	return 0;
 }

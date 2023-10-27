@@ -110,14 +110,21 @@ board* loop (board* the_board, int iterations)
 	board* prev_board;
 	int current_iteration = 1;
 	do {
-		printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
-		show_board(the_board);
+		show(the_board, current_iteration, iterations);
 		prev_board = copy_board_into(the_board, prev_board);
 		the_board = run_iteration(prev_board);	
 	} while (current_iteration++ != iterations && is_different(the_board, prev_board));
-	printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
-	show_board(the_board);
+	show(the_board, current_iteration, iterations);
 	free(prev_board);
 	return the_board;
+}
+
+void show (board* the_board, int current_iteration, int iterations)
+{
+	printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
+	show_board(the_board);
+	char* buf = (char*) malloc (sizeof(char) * 7+4);
+	sprintf(buf, "output/iter_%d.ppm", current_iteration);
+	create_bmp(the_board, buf);
 }
 
