@@ -2,6 +2,7 @@
 	"name": "BEACON",
 	"columns": 4,
 	"rows": 2,
+	"padding": 1,
 	"array": [
 		{ "x": 0, "y": 1 },
 		{ "x": 1, "y": 0 },

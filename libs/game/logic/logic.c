@@ -98,7 +98,10 @@ int is_multiple_of (int a, int b)
 
 int is_different (board* a, board* b)
 {
-	if (a->n_columns != b->n_columns || a->n_rows != b->n_rows) error("Boards cannot be compared, sizes do not match", 2);
+	if (
+		a->n_columns != b->n_columns ||
+		a->n_rows != b->n_rows
+	) error("Boards cannot be compared, sizes do not match", 2);
 	int board_size = a->n_columns * a->n_rows;
 	for (int i = 0 ; i < board_size ; i++)
 		if (*(a->cells+i) != *(b->cells+i)) return 1;
@@ -107,15 +110,17 @@ int is_different (board* a, board* b)
 
 board* loop (board* the_board, int iterations)
 {
-	board* prev_board;
+	board* prev_board = NULL;
+	int different;
 	int current_iteration = 1;
 	do {
+		board* prev_board = copy_board(the_board);
 		show(the_board, current_iteration, iterations);
-		prev_board = copy_board_into(the_board, prev_board);
 		the_board = run_iteration(prev_board);	
-	} while (current_iteration++ != iterations && is_different(the_board, prev_board));
+		different = is_different(the_board, prev_board);
+	} while (current_iteration++ != iterations && different);
+	// } while (current_iteration++ != iterations);
 	show(the_board, current_iteration, iterations);
-	free(prev_board);
 	return the_board;
 }
 
@@ -123,8 +128,9 @@ void show (board* the_board, int current_iteration, int iterations)
 {
 	printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
 	show_board(the_board);
-	char* buf = (char*) malloc (sizeof(char) * 7+4);
+	char* buf = (char*) malloc (sizeof(char) * 50);
 	sprintf(buf, "output/iter_%d.ppm", current_iteration);
 	create_bmp(the_board, buf);
+	free(buf);
 }
 

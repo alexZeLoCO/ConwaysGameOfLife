@@ -29,11 +29,13 @@ board* get_from_file (char* filename)
 
 	// Extract values from the JSON object
   const char *name = json_string_value(json_object_get(root, "name"));
+  const int padding = json_integer_value(json_object_get(root, "padding"));
 
   // One row and column on each side is added for padding
 	out = new_board(
-      json_integer_value(json_object_get(root, "rows"))+2,
-      json_integer_value(json_object_get(root, "columns"))+2
+      padding,
+      json_integer_value(json_object_get(root, "rows")),
+      json_integer_value(json_object_get(root, "columns"))
   );
 
   json_t *array = json_object_get(root, "array");
@@ -43,8 +45,8 @@ board* get_from_file (char* filename)
     json_t *item = json_array_get(array, i);
     // One row and column is added to compensate the padding
     set_cell(out,
-      json_integer_value(json_object_get(item, "x"))+1,
-      json_integer_value(json_object_get(item, "y"))+1,
+      json_integer_value(json_object_get(item, "x")),
+      json_integer_value(json_object_get(item, "y")),
       POPULATED
     );
   }

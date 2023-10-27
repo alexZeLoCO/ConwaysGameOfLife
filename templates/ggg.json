@@ -2,6 +2,7 @@
 	"name": "GGG",
 	"columns": 36,
 	"rows": 9,
+	"padding": 50,
 	"array": [
 		{ "x": 24, "y": 0 },
 		{ "x": 22, "y": 1 },

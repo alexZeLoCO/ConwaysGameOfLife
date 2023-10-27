@@ -2,6 +2,7 @@
 	"name": "BLINKER",
 	"columns": 1,
 	"rows": 3,
+	"padding": 1,
 	"array": [
 		{
 			"x": 0,
