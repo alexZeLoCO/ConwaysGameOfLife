@@ -93,4 +93,47 @@ template get_template_from_name (char* name)
   return BLINKER;
 }
 
+char* min(char* a, char* b){
+  return a < b ? a : b; 
+}
+
+board* get_from_rle (char* filename)
+{
+  board* out;
+  FILE* fp = fopen(filename, "r");
+  char c;
+  int bufsize = 100;
+  char* buf = (char*) malloc (bufsize * sizeof(char));
+  while ((c = getc(fp)) == '#')
+    fgets(buf, bufsize, fp); // Discard
+  
+  fgets(buf, bufsize, fp); // rows, cols and rule line
+  char* x = strchr(buf, '=')+2; // rows
+  int n_cols = atoi(x);
+  char* y = strchr(x, '=')+2; // cols
+  int n_rows = atoi(y);
+
+  out = new_board(50, n_rows, n_cols);
+
+  while (fgets(buf, bufsize, fp))
+  {
+    printf("READ: %s", buf);
+    int row = 0;
+    int column = 0;
+    char  
+      *current = buf,
+      *last = strchr(buf, '\n');
+    while (current < last)
+    {
+      if (*(current) == '$') row++;
+      int repeat = atoi(current) + column;
+      char *operation = (min(strchr(current, 'b'), strchr(current, 'o')));
+      for (int i = column ; i < repeat ; i++)
+        set_cell(out, i, row, *operation == 'b' ? EMPTY : POPULATED);
+      column += repeat;
+      current = operation+1;
+    }
+  }
+  return out;
+}
 
