@@ -1,3 +1,3 @@
 #! /bin/sh
 
-feh --force-aliasing -Z -F --sort name --version-sort output/
+feh --force-aliasing -Z --sort name --version-sort output/
