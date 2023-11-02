@@ -115,14 +115,16 @@ board* get_from_rle (char* filename)
   int n_rows = atoi(y);
 
   printf("rows: %d cols: %d\n", n_rows, n_cols);
-
   out = new_board(50, n_rows, n_cols);
 
-  int row = -1;
+  // TODO: Find out if \n is considered a new row jump in RLE format
+  int row = -1; // If \n is considered a new row jump
+  // int row = 0; // If \n is NOT considered a new row jump
   while (fgets(buf, bufsize, fp))
   {
     printf("READ: %s\n", buf);
-    row += 1;
+    row += 1; // If \n is considered a new row jump
+              // If \n is NOT considered a new row jump (do nothing)
     int column = 0;
     char  
       *current = buf,
@@ -133,16 +135,13 @@ board* get_from_rle (char* filename)
     while (current < last)
     {
       printf("Current char: %c\n", *current);
-      printf("lol");
       if (*current == '$')
       {
-        printf("loli");
         row++;
         column = 0;
         current += 1;
         printf("Found $, current char: %c\n", *current);
       }
-      printf("lolii");
       int repeat = 1;
       if (*(current) != 'b' && *(current) != 'o')
       {
@@ -152,7 +151,10 @@ board* get_from_rle (char* filename)
       char
         *next_b = strchr(current, 'b'),
         *next_o = strchr(current, 'o'),
-        *operation = next_b == NULL ? next_o : min(next_b, next_o);
+        *operation = NULL;
+      if (next_b == NULL) operation = next_o;
+      else if (next_o == NULL) operation = next_b;
+      else operation = min(next_b, next_o);
       printf("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
       // printf("Setting %d on row %d, column %d %d times\n", *operation == 'b' ? EMPTY : POPULATED, row, column, repeat);
       for (int i = column ; i < column+repeat ; i++)
@@ -162,7 +164,7 @@ board* get_from_rle (char* filename)
       }
       column += repeat;
       current = operation+1;
-      printf("Next char to be evaluated: %c (at %p), out of (%p) Equal? %b\n", *current, current, last, current < last);
+      printf("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
     }
   }
   show_board(out);
