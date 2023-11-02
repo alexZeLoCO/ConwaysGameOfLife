@@ -126,8 +126,8 @@ board* loop (board* the_board, int iterations)
 
 void show (board* the_board, int current_iteration, int iterations)
 {
-	printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
-	show_board(the_board);
+	// printf("\n=== ITERATION %d/%d ===\n", current_iteration, iterations);
+	// show_board(the_board);
 	char* buf = (char*) malloc (sizeof(char) * 50);
 	sprintf(buf, "output/iter_%d.ppm", current_iteration);
 	create_bmp(the_board, buf);
