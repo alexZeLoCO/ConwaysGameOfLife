@@ -5,7 +5,7 @@ factorydir=libs/game/factory
 boarddir=libs/board
 errordir=libs/error
 mediadir=libs/media
-GCFLAGS=
+GCFLAGS=-g
 LIBS=$(shell pkg-config --libs jansson)
 CFLAGS=$(shell pkg-config --cflags jansson)
 
@@ -29,5 +29,5 @@ error.o : $(errordir)/error.c $(errordir)/error.h
 
 
 clean : 
-	rm **.o; rm **.h.gch; rm **.ppm; rm main;
+	rm **.o; rm **.h.gch; rm output/*.ppm; rm main;
 
