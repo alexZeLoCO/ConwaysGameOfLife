@@ -29,7 +29,5 @@ error.o : $(errordir)/error.c $(errordir)/error.h
 
 
 clean : 
-	rm **.o
-	rm **.h.gch
-	rm main
+	rm **.o; rm **.h.gch; rm **.ppm; rm main;
 
