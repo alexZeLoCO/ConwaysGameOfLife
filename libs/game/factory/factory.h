@@ -27,5 +27,6 @@ enum Enum_Template {
 board* get_from_template(template the_template);
 board* get_from_file(char* filename);
 template get_template_from_name(char* name);
+board* get_from_plaintext(char* filename);
 
 #endif
