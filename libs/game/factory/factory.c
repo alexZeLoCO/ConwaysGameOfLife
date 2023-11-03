@@ -97,7 +97,7 @@ char* min(char* a, char* b){
   return a < b ? a : b; 
 }
 
-board* get_from_rle (char* filename)
+board* get_from_rle (char* filename, int padding)
 {
   board* out;
   FILE* fp = fopen(filename, "r");
@@ -114,25 +114,21 @@ board* get_from_rle (char* filename)
   char* y = strchr(x, '=')+2; // cols
   int n_rows = atoi(y);
 
-  printf("rows: %d cols: %d\n", n_rows, n_cols);
-  out = new_board(50, n_rows, n_cols);
+  // printf("rows: %d cols: %d\n", n_rows, n_cols);
+  out = new_board(padding, n_rows, n_cols);
 
-  // TODO: Find out if \n is considered a new row jump in RLE format
-  int row = -1; // If \n is considered a new row jump
-  // int row = 0; // If \n is NOT considered a new row jump
+  int row = 0; 
+  int column = 0;
   while (fgets(buf, bufsize, fp))
   {
     printf("READ: %s\n", buf);
-    row += 1; // If \n is considered a new row jump
-              // If \n is NOT considered a new row jump (do nothing)
-    int column = 0;
     char  
       *current = buf,
       *last_exclamation_mark = strchr(buf, '!'),
-      *last_newline = buf+strlen(buf)-2,
+      *last_newline = buf+strlen(buf)-1,
       *last = last_exclamation_mark == NULL ? last_newline : last_exclamation_mark;
     printf("Current %s (at %p), last %c (at %p), strlen %c (at %p)\n", current, current, *last, last, *last, last);
-    while (current < last)
+    while (current < last || *current == '!' || current < last)
     {
       printf("Current char: %c\n", *current);
       if (*current == '$')
@@ -142,32 +138,35 @@ board* get_from_rle (char* filename)
         current += 1;
         printf("Found $, current char: %c\n", *current);
       }
-      int repeat = 1;
-      if (*(current) != 'b' && *(current) != 'o')
+      if (current < last)
       {
-        repeat = atoi(current);
-        printf("Found %d\n", repeat);
+        int repeat = 1;
+        if (*(current) != 'b' && *(current) != 'o')
+        {
+          repeat = atoi(current);
+          printf("Found %d\n", repeat);
+        }
+        char
+          *next_b = strchr(current, 'b'),
+          *next_o = strchr(current, 'o'),
+          *operation = NULL;
+        if (next_b == NULL) operation = next_o;
+        else if (next_o == NULL) operation = next_b;
+        else operation = min(next_b, next_o);
+        printf("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
+        for (int i = column ; i < column+repeat ; i++)
+        {
+          printf("Setting %d on row %d, column %d\n", *operation == 'b' ? EMPTY : POPULATED, row, i);
+          set_cell(out, i, row, *operation == 'b' ? EMPTY : POPULATED);
+        }
+        column += repeat;
+        current = operation+1;
+        printf("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
       }
-      char
-        *next_b = strchr(current, 'b'),
-        *next_o = strchr(current, 'o'),
-        *operation = NULL;
-      if (next_b == NULL) operation = next_o;
-      else if (next_o == NULL) operation = next_b;
-      else operation = min(next_b, next_o);
-      printf("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
-      // printf("Setting %d on row %d, column %d %d times\n", *operation == 'b' ? EMPTY : POPULATED, row, column, repeat);
-      for (int i = column ; i < column+repeat ; i++)
-      {
-        printf("Setting %d on row %d, column %d\n", *operation == 'b' ? EMPTY : POPULATED, row, i);
-        set_cell(out, i, row, *operation == 'b' ? EMPTY : POPULATED);
-      }
-      column += repeat;
-      current = operation+1;
-      printf("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
+      else current++;
     }
   }
-  show_board(out);
+  // show_board(out);
   return out;
 }
 
