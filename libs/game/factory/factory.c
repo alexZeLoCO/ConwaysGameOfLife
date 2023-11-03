@@ -1,8 +1,10 @@
 #include <jansson.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "factory.h"
 
-board* get_from_file (char* filename)
+board* get_from_json (char* filename)
 {
 	board* out;
 
@@ -168,5 +170,46 @@ board* get_from_rle (char* filename, int padding)
   }
   // show_board(out);
   return out;
+}
+
+int get_number_of_lines_from_file (FILE *fp)
+{
+  if (fp == NULL) error("File not found", 40);
+  int out = 0;
+  char c;
+  for (c = getc(fp); c != EOF; c = getc(fp))
+    if (c == '\n')
+      out++;
+  return out;
+}
+
+board* get_from_plaintext (char* filename)
+{
+  FILE *fp = fopen(filename, "r");
+  if (fp == NULL) error("File not found", 40);
+  int sizeofbuf = 100;
+  char* buf = (char*) malloc (sizeof(char) * sizeofbuf);
+  board* the_board = NULL;
+  int n_row = 0;
+  int n_col = 0;
+  while (fgets(buf, sizeofbuf, fp))
+  {
+    printf("Read: %s", buf);
+    if (*(buf) != '!') // Skip lines starting with '!'
+    { 
+      int buf_len = strlen(buf)-2; // Remove \n
+      if (the_board == NULL) 
+        the_board = new_board(50, get_number_of_lines_from_file(
+          fopen(filename, "r") // We have to create a new fp to avoid using the lines left in the actual fp we are using
+        ), buf_len);
+      for (int n_col = 0; n_col < buf_len; n_col++)
+      {
+        printf("Setting row: %d, col: %d value %c (%d)\n", n_row, n_col, *(buf+n_col), *(buf+n_col) == '.' ? EMPTY : POPULATED);
+        set_cell(the_board, n_col, n_row, *(buf+n_col) == '.' ? EMPTY : POPULATED);
+      }
+      n_row++;
+    }
+  }
+  return the_board;
 }
 
