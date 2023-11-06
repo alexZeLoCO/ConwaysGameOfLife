@@ -24,10 +24,10 @@ enum Enum_Template {
 
 #define template enum Enum_Template
 
-board* get_from_template(template);
 template get_template_from_name(char*);
-board* get_from_json(char*);
+board* get_from_template(template, int);
+board* get_from_json(char*, int);
 board* get_from_rle(char*, int);
-board* get_from_plaintext(char*);
+board* get_from_plaintext(char*, int);
 
 #endif

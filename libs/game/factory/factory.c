@@ -4,7 +4,7 @@
 
 #include "factory.h"
 
-board* get_from_json (char* filename)
+board* get_from_json (char* filename, int padding)
 {
 	board* out;
 
@@ -31,7 +31,6 @@ board* get_from_json (char* filename)
 
 	// Extract values from the JSON object
   const char *name = json_string_value(json_object_get(root, "name"));
-  const int padding = json_integer_value(json_object_get(root, "padding"));
 
   // One row and column on each side is added for padding
 	out = new_board(
@@ -59,22 +58,22 @@ board* get_from_json (char* filename)
   return out;
 }
 
-board* get_from_template (template name)
+board* get_from_template (template name, int padding)
 {
   switch(name)
   {
-    case BLINKER: return get_from_file("templates/blinker.json");
-    case BEACON: return get_from_file("templates/beacon.json");
-    case TOAD: return get_from_file("templates/toad.json");
-    case GLIDER: return get_from_file("templates/glider.json");
-    case LWSS: return get_from_file("templates/lwss.json");
-    case MWSS: return get_from_file("templates/mwss.json");
-    case HWSS: return get_from_file("templates/hwss.json");
-    case GGG: return get_from_file("templates/ggg.json");
-    case SGG: return get_from_file("templates/sgg.json");
-    case PENTOMINO: return get_from_file("templates/pentomino.json");
-    case DIEHARD: return get_from_file("templates/diehard.json");
-    case DIAMOND: return get_from_file("templates/diamond.json");
+    case BLINKER: return get_from_json("templates/blinker.json", padding);
+    case BEACON: return get_from_json("templates/beacon.json", padding);
+    case TOAD: return get_from_json("templates/toad.json", padding);
+    case GLIDER: return get_from_json("templates/glider.json", padding);
+    case LWSS: return get_from_json("templates/lwss.json", padding);
+    case MWSS: return get_from_json("templates/mwss.json", padding);
+    case HWSS: return get_from_json("templates/hwss.json", padding);
+    case GGG: return get_from_json("templates/ggg.json", padding);
+    case SGG: return get_from_json("templates/sgg.json", padding);
+    case PENTOMINO: return get_from_json("templates/pentomino.json", padding);
+    case DIEHARD: return get_from_json("templates/diehard.json", padding);
+    case DIAMOND: return get_from_json("templates/diamond.json", padding);
   }
 }
 
@@ -123,22 +122,22 @@ board* get_from_rle (char* filename, int padding)
   int column = 0;
   while (fgets(buf, bufsize, fp))
   {
-    printf("READ: %s\n", buf);
+    // printf("READ: %s\n", buf);
     char  
       *current = buf,
       *last_exclamation_mark = strchr(buf, '!'),
       *last_newline = buf+strlen(buf)-1,
       *last = last_exclamation_mark == NULL ? last_newline : last_exclamation_mark;
-    printf("Current %s (at %p), last %c (at %p), strlen %c (at %p)\n", current, current, *last, last, *last, last);
+    // printf("Current %s (at %p), last %c (at %p), strlen %c (at %p)\n", current, current, *last, last, *last, last);
     while (current < last || *current == '!' || current < last)
     {
-      printf("Current char: %c\n", *current);
+      // printf("Current char: %c\n", *current);
       if (*current == '$')
       {
         row++;
         column = 0;
         current += 1;
-        printf("Found $, current char: %c\n", *current);
+        // printf("Found $, current char: %c\n", *current);
       }
       if (current < last)
       {
@@ -146,7 +145,7 @@ board* get_from_rle (char* filename, int padding)
         if (*(current) != 'b' && *(current) != 'o')
         {
           repeat = atoi(current);
-          printf("Found %d\n", repeat);
+          // printf("Found %d\n", repeat);
         }
         char
           *next_b = strchr(current, 'b'),
@@ -155,15 +154,15 @@ board* get_from_rle (char* filename, int padding)
         if (next_b == NULL) operation = next_o;
         else if (next_o == NULL) operation = next_b;
         else operation = min(next_b, next_o);
-        printf("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
+        // printf("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
         for (int i = column ; i < column+repeat ; i++)
         {
-          printf("Setting %d on row %d, column %d\n", *operation == 'b' ? EMPTY : POPULATED, row, i);
+          // printf("Setting %d on row %d, column %d\n", *operation == 'b' ? EMPTY : POPULATED, row, i);
           set_cell(out, i, row, *operation == 'b' ? EMPTY : POPULATED);
         }
         column += repeat;
         current = operation+1;
-        printf("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
+        // printf("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
       }
       else current++;
     }
@@ -183,7 +182,7 @@ int get_number_of_lines_from_file (FILE *fp)
   return out;
 }
 
-board* get_from_plaintext (char* filename)
+board* get_from_plaintext (char* filename, int padding)
 {
   FILE *fp = fopen(filename, "r");
   if (fp == NULL) error("File not found", 40);
@@ -194,17 +193,17 @@ board* get_from_plaintext (char* filename)
   int n_col = 0;
   while (fgets(buf, sizeofbuf, fp))
   {
-    printf("Read: %s", buf);
+    // printf("Read: %s", buf);
     if (*(buf) != '!') // Skip lines starting with '!'
     { 
       int buf_len = strlen(buf)-2; // Remove \n
       if (the_board == NULL) 
-        the_board = new_board(50, get_number_of_lines_from_file(
+        the_board = new_board(padding, get_number_of_lines_from_file(
           fopen(filename, "r") // We have to create a new fp to avoid using the lines left in the actual fp we are using
         ), buf_len);
       for (int n_col = 0; n_col < buf_len; n_col++)
       {
-        printf("Setting row: %d, col: %d value %c (%d)\n", n_row, n_col, *(buf+n_col), *(buf+n_col) == '.' ? EMPTY : POPULATED);
+        // printf("Setting row: %d, col: %d value %c (%d)\n", n_row, n_col, *(buf+n_col), *(buf+n_col) == '.' ? EMPTY : POPULATED);
         set_cell(the_board, n_col, n_row, *(buf+n_col) == '.' ? EMPTY : POPULATED);
       }
       n_row++;
