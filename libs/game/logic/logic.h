@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include "../../board/board.h"
-#include "../../error/error.h"
+#include "../../logging/error/error.h"
 #include "../../media/media.h"
 
 board* run_iteration (board*);

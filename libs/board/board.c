@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "../error/error.h"
 #include "board.h"
 
 
@@ -33,8 +32,17 @@ void show_board (board* the_board)
 
 board* set_cell (board* the_board, int target_column, int target_row, int to_be_placed)
 {
+	return set_cell_by_idx(
+		the_board,
+		target_column+(the_board->padding+target_row)*the_board->n_columns+the_board->padding,
+		to_be_placed
+	);
+}
+
+board* set_cell_by_idx (board* the_board, int idx, int to_be_placed)
+{
 	if (to_be_placed != EMPTY && to_be_placed != POPULATED) error("An illegal cell is trying to be placed\n", 1);
-	*(the_board->cells+target_column+(the_board->padding+target_row)*the_board->n_columns+the_board->padding) = to_be_placed;
+	*(the_board->cells+idx) = to_be_placed;
 	return the_board;
 }
 

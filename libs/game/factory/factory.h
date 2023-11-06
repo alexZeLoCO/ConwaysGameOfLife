@@ -5,7 +5,8 @@
 #include <string.h>
 
 #include "../../board/board.h"
-#include "../../error/error.h"
+#include "../../logging/error/error.h"
+#include "../../logging/log/log.h"
 
 enum Enum_Template {
 	BLINKER,
@@ -24,8 +25,10 @@ enum Enum_Template {
 
 #define template enum Enum_Template
 
-board* get_from_template(template the_template);
-board* get_from_file(char* filename);
-template get_template_from_name(char* name);
+template get_template_from_name(char*);
+board* get_from_template(template, int);
+board* get_from_json(char*, int);
+board* get_from_rle(char*, int);
+board* get_from_plaintext(char*, int);
 
 #endif
