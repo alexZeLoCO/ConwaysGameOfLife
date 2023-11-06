@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include "../logging/error/error.h"
+
 struct struct_board
 {
 	int padding;

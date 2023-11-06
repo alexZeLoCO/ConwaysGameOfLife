@@ -115,37 +115,37 @@ board* get_from_rle (char* filename, int padding)
   char* y = strchr(x, '=')+2; // cols
   int n_rows = atoi(y);
 
-  // printf("rows: %d cols: %d\n", n_rows, n_cols);
+  info("rows: %d cols: %d\n", n_rows, n_cols);
   out = new_board(padding, n_rows, n_cols);
 
   int row = 0; 
   int column = 0;
   while (fgets(buf, bufsize, fp))
   {
-    // printf("READ: %s\n", buf);
+    info("READ: %s\n", buf);
     char  
       *current = buf,
       *last_exclamation_mark = strchr(buf, '!'),
       *last_newline = buf+strlen(buf)-1,
       *last = last_exclamation_mark == NULL ? last_newline : last_exclamation_mark;
-    // printf("Current %s (at %p), last %c (at %p), strlen %c (at %p)\n", current, current, *last, last, *last, last);
-    while (current < last || *current == '!' || current < last)
+    info("Current %s (at %p), last %c (at %p), strlen %c (at %p)\n", current, current, *last, last, *last, last);
+    while (current < last)
     {
-      // printf("Current char: %c\n", *current);
+      info("Current char: %c\n", *current);
       if (*current == '$')
       {
         row++;
         column = 0;
         current += 1;
-        // printf("Found $, current char: %c\n", *current);
+        info("Found $, current char: %c\n", *current);
       }
-      if (current < last)
+      if (current < last && (strcmp(current, "b") == 0 || strcmp(current, "o") == 0))
       {
         int repeat = 1;
         if (*(current) != 'b' && *(current) != 'o')
         {
           repeat = atoi(current);
-          // printf("Found %d\n", repeat);
+          info("Found %d\n", repeat);
         }
         char
           *next_b = strchr(current, 'b'),
@@ -154,15 +154,15 @@ board* get_from_rle (char* filename, int padding)
         if (next_b == NULL) operation = next_o;
         else if (next_o == NULL) operation = next_b;
         else operation = min(next_b, next_o);
-        // printf("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
+        info("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
         for (int i = column ; i < column+repeat ; i++)
         {
-          // printf("Setting %d on row %d, column %d\n", *operation == 'b' ? EMPTY : POPULATED, row, i);
+          info("Setting %d on row %d, column %d\n", *operation == 'b' ? EMPTY : POPULATED, row, i);
           set_cell(out, i, row, *operation == 'b' ? EMPTY : POPULATED);
         }
         column += repeat;
         current = operation+1;
-        // printf("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
+        info("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
       }
       else current++;
     }
@@ -193,7 +193,7 @@ board* get_from_plaintext (char* filename, int padding)
   int n_col = 0;
   while (fgets(buf, sizeofbuf, fp))
   {
-    // printf("Read: %s", buf);
+    info("Read: %s", buf);
     if (*(buf) != '!') // Skip lines starting with '!'
     { 
       int buf_len = strlen(buf)-2; // Remove \n
@@ -203,7 +203,7 @@ board* get_from_plaintext (char* filename, int padding)
         ), buf_len);
       for (int n_col = 0; n_col < buf_len; n_col++)
       {
-        // printf("Setting row: %d, col: %d value %c (%d)\n", n_row, n_col, *(buf+n_col), *(buf+n_col) == '.' ? EMPTY : POPULATED);
+        info("Setting row: %d, col: %d value %c (%d)\n", n_row, n_col, *(buf+n_col), *(buf+n_col) == '.' ? EMPTY : POPULATED);
         set_cell(the_board, n_col, n_row, *(buf+n_col) == '.' ? EMPTY : POPULATED);
       }
       n_row++;

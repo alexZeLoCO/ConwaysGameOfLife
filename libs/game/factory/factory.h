@@ -5,7 +5,8 @@
 #include <string.h>
 
 #include "../../board/board.h"
-#include "../../error/error.h"
+#include "../../logging/error/error.h"
+#include "../../logging/log/log.h"
 
 enum Enum_Template {
 	BLINKER,
