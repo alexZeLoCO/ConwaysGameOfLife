@@ -8,6 +8,7 @@ int logging = 0;
 void set_logging_on (int is_logging_on)
 {
 	logging = is_logging_on;
+	fflush(stdout);
 	return;
 }
 
