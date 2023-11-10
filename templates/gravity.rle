@@ -1,0 +1,5 @@
+# Upstream: https://conwaylife.com/forums/viewtopic.php?&p=153956#p153956
+x = 20, y = 20, rule = B3/S23
+5b4o$9bo$9bo$10b2o6$o$o$o10b2obobo2bo$b2o14bobo$b3o8b3o3b2o$b2o8b4obo
+2bo$11bobo4bo$17b3o$14bobo2bo$11b2ob3obo$12b3ob4o!
+
