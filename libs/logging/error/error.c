@@ -3,10 +3,9 @@
 
 #include "error.h"
 
-void error (char* message, int out_code)
+void error(char *message, int out_code)
 {
 	fprintf(stderr, message);
 	exit(out_code);
 	return;
 }
-

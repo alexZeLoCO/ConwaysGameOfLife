@@ -4,19 +4,20 @@
 
 #include "factory.h"
 
-board* get_from_json (char* filename, int padding)
+board *get_from_json(char *filename, int padding)
 {
-	board* out;
+  board *out;
 
-	// Open the JSON file
+  // Open the JSON file
   FILE *file = fopen(filename, "r");
-  if (!file) error("Failed to open the JSON file\n", 31);
+  if (!file)
+    error("Failed to open the JSON file\n", 31);
 
   // Read the contents of the JSON file
   fseek(file, 0, SEEK_END);
   long file_size = ftell(file);
   fseek(file, 0, SEEK_SET);
-  char *json_data = (char *) malloc(file_size + 1);
+  char *json_data = (char *)malloc(file_size + 1);
   fread(json_data, 1, file_size, file);
   json_data[file_size] = '\0';
   fclose(file);
@@ -27,29 +28,29 @@ board* get_from_json (char* filename, int padding)
   json_t *root = json_loads(json_data, 0, &json_error);
   free(json_data);
 
-  if (!root) error("Failed to parse the JSON data", 32);
+  if (!root)
+    error("Failed to parse the JSON data", 32);
 
-	// Extract values from the JSON object
+  // Extract values from the JSON object
   const char *name = json_string_value(json_object_get(root, "name"));
 
   // One row and column on each side is added for padding
-	out = new_board(
+  out = new_board(
       padding,
       json_integer_value(json_object_get(root, "rows")),
-      json_integer_value(json_object_get(root, "columns"))
-  );
+      json_integer_value(json_object_get(root, "columns")));
 
   json_t *array = json_object_get(root, "array");
   size_t array_size = json_array_size(array);
 
-  for (size_t i = 0; i < array_size; i++) {
+  for (size_t i = 0; i < array_size; i++)
+  {
     json_t *item = json_array_get(array, i);
     // One row and column is added to compensate the padding
     set_cell(out,
-      json_integer_value(json_object_get(item, "x")),
-      json_integer_value(json_object_get(item, "y")),
-      POPULATED
-    );
+             json_integer_value(json_object_get(item, "x")),
+             json_integer_value(json_object_get(item, "y")),
+             POPULATED);
   }
 
   // Cleanup
@@ -58,122 +59,150 @@ board* get_from_json (char* filename, int padding)
   return out;
 }
 
-board* get_from_template (template name, int padding)
+board *get_from_template(template name, int padding)
 {
-  switch(name)
+  switch (name)
   {
-    case BLINKER: return get_from_json("templates/blinker.json", padding);
-    case BEACON: return get_from_json("templates/beacon.json", padding);
-    case TOAD: return get_from_json("templates/toad.json", padding);
-    case GLIDER: return get_from_json("templates/glider.json", padding);
-    case LWSS: return get_from_json("templates/lwss.json", padding);
-    case MWSS: return get_from_json("templates/mwss.json", padding);
-    case HWSS: return get_from_json("templates/hwss.json", padding);
-    case GGG: return get_from_json("templates/ggg.json", padding);
-    case SGG: return get_from_json("templates/sgg.json", padding);
-    case PENTOMINO: return get_from_json("templates/pentomino.json", padding);
-    case DIEHARD: return get_from_json("templates/diehard.json", padding);
-    case DIAMOND: return get_from_json("templates/diamond.json", padding);
+  case BLINKER:
+    return get_from_json("templates/blinker.json", padding);
+  case BEACON:
+    return get_from_json("templates/beacon.json", padding);
+  case TOAD:
+    return get_from_json("templates/toad.json", padding);
+  case GLIDER:
+    return get_from_json("templates/glider.json", padding);
+  case LWSS:
+    return get_from_json("templates/lwss.json", padding);
+  case MWSS:
+    return get_from_json("templates/mwss.json", padding);
+  case HWSS:
+    return get_from_json("templates/hwss.json", padding);
+  case GGG:
+    return get_from_json("templates/ggg.json", padding);
+  case SGG:
+    return get_from_json("templates/sgg.json", padding);
+  case PENTOMINO:
+    return get_from_json("templates/pentomino.json", padding);
+  case DIEHARD:
+    return get_from_json("templates/diehard.json", padding);
+  case DIAMOND:
+    return get_from_json("templates/diamond.json", padding);
   }
 }
 
-template get_template_from_name (char* name)
+template get_template_from_name(char *name)
 {
-  if (strcmp(name, "BLINKER") == 0) return BLINKER;
-  if (strcmp(name, "BEACON") == 0) return BEACON;
-  if (strcmp(name, "TOAD") == 0) return TOAD;
-  if (strcmp(name, "GLIDER") == 0) return GLIDER;
-  if (strcmp(name, "LWSS") == 0) return LWSS;
-  if (strcmp(name, "MWSS") == 0) return MWSS;
-  if (strcmp(name, "HWSS") == 0) return HWSS;
-  if (strcmp(name, "GGG") == 0) return GGG;
-  if (strcmp(name, "SGG") == 0) return SGG;
-  if (strcmp(name, "PENTOMINO") == 0) return PENTOMINO;
-  if (strcmp(name, "DIEHARD") == 0) return DIEHARD;
-  if (strcmp(name, "DIAMOND") == 0) return DIAMOND;
+  if (strcmp(name, "BLINKER") == 0)
+    return BLINKER;
+  if (strcmp(name, "BEACON") == 0)
+    return BEACON;
+  if (strcmp(name, "TOAD") == 0)
+    return TOAD;
+  if (strcmp(name, "GLIDER") == 0)
+    return GLIDER;
+  if (strcmp(name, "LWSS") == 0)
+    return LWSS;
+  if (strcmp(name, "MWSS") == 0)
+    return MWSS;
+  if (strcmp(name, "HWSS") == 0)
+    return HWSS;
+  if (strcmp(name, "GGG") == 0)
+    return GGG;
+  if (strcmp(name, "SGG") == 0)
+    return SGG;
+  if (strcmp(name, "PENTOMINO") == 0)
+    return PENTOMINO;
+  if (strcmp(name, "DIEHARD") == 0)
+    return DIEHARD;
+  if (strcmp(name, "DIAMOND") == 0)
+    return DIAMOND;
   return BLINKER;
 }
 
-char* min(char* a, char* b){
-  return a < b ? a : b; 
+char *min(char *a, char *b)
+{
+  if (a == NULL)
+    return b;
+  if (b == NULL)
+    return a;
+  return a < b ? a : b;
 }
 
-board* get_from_rle (char* filename, int padding)
+int is_valid(char maybe_valid)
 {
-  board* out;
-  FILE* fp = fopen(filename, "r");
-  if (fp == NULL) error("File was not found", 40);
+  return (maybe_valid >= '0' && maybe_valid <= '9') || maybe_valid == 'b' || maybe_valid == 'o' || maybe_valid == '$';
+}
+
+// FIXME: This no worky (still)
+board *get_from_rle(char *filename, int padding)
+{
+  board *out;
+  FILE *fp = fopen(filename, "r");
+  if (fp == NULL)
+    error("File was not found", 40);
   char c;
   int bufsize = 100;
-  char* buf = (char*) malloc (bufsize * sizeof(char));
+  char *buf = (char *)malloc(bufsize * sizeof(char));
   while ((c = getc(fp)) == '#')
     fgets(buf, bufsize, fp); // Discard
-  
-  fgets(buf, bufsize, fp); // rows, cols and rule line
-  char* x = strchr(buf, '=')+2; // rows
+
+  fgets(buf, bufsize, fp);        // rows, cols and rule line
+  char *x = strchr(buf, '=') + 2; // rows
   int n_cols = atoi(x);
-  char* y = strchr(x, '=')+2; // cols
+  char *y = strchr(x, '=') + 2; // cols
   int n_rows = atoi(y);
 
   info("rows: %d cols: %d\n", n_rows, n_cols);
   out = new_board(padding, n_rows, n_cols);
 
-  int row = 0; 
+  int row = 0;
   int column = 0;
-  while (fgets(buf, bufsize, fp))
+  int repeat = 0;
+  char current = fgetc(fp);
+
+  while (!feof(fp))
   {
-    info("READ: %s\n", buf);
-    char  
-      *current = buf,
-      *last_exclamation_mark = strchr(buf, '!'),
-      *last_newline = buf+strlen(buf)-1,
-      *last = last_exclamation_mark == NULL ? last_newline : last_exclamation_mark;
-    info("Current %s (at %p), last %c (at %p), strlen %c (at %p)\n", current, current, *last, last, *last, last);
-    while (current < last)
+    if (is_valid(current))
     {
-      info("Current char: %c\n", *current);
-      if (*current == '$')
+      info("Current: %c\n", current);
+      if (current >= '0' && current <= '9')
       {
-        row++;
-        column = 0;
-        current += 1;
-        info("Found $, current char: %c\n", *current);
+        if (repeat > 0)
+          repeat = repeat * 10 + (current - '0');
+        else
+          repeat = current - '0';
+        info("Operation will be repeated %d times\n", repeat);
       }
-      if (current < last && (strcmp(current, "b") == 0 || strcmp(current, "o") == 0))
+      else
       {
-        int repeat = 1;
-        if (*(current) != 'b' && *(current) != 'o')
+        repeat = repeat > 1 ? repeat : 1;
+        if (current == '$')
         {
-          repeat = atoi(current);
-          info("Found %d\n", repeat);
+          column = 0;
+          row += repeat;
+          info("Skipping to row %d\n", row);
         }
-        char
-          *next_b = strchr(current, 'b'),
-          *next_o = strchr(current, 'o'),
-          *operation = NULL;
-        if (next_b == NULL) operation = next_o;
-        else if (next_o == NULL) operation = next_b;
-        else operation = min(next_b, next_o);
-        info("Next b: %p\nNext o: %p\nOperation: %p (%c)\n", next_b, next_o, operation, *operation);
-        for (int i = column ; i < column+repeat ; i++)
+        else
         {
-          info("Setting %d on row %d, column %d\n", *operation == 'b' ? EMPTY : POPULATED, row, i);
-          set_cell(out, i, row, *operation == 'b' ? EMPTY : POPULATED);
+          for (int i = 0; i < repeat; i++)
+            set_cell(out, column + i, row, current == 'o' ? POPULATED : EMPTY);
+          info("Executing %c %d times (at row: %d, col: %d)\n", current, repeat, row, column);
+          column += repeat;
         }
-        column += repeat;
-        current = operation+1;
-        info("Next char to be evaluated: %c (at %p), out of (%p) Equal? %d\n", *current, current, last, current < last);
+        repeat = 0;
       }
-      else current++;
     }
+    current = fgetc(fp);
   }
+
   // show_board(out);
   return out;
 }
 
-int get_number_of_lines_from_file (FILE *fp)
+int get_number_of_lines_from_file(FILE *fp)
 {
-  if (fp == NULL) error("File not found", 40);
+  if (fp == NULL)
+    error("File not found", 40);
   int out = 0;
   char c;
   for (c = getc(fp); c != EOF; c = getc(fp))
@@ -182,33 +211,33 @@ int get_number_of_lines_from_file (FILE *fp)
   return out;
 }
 
-board* get_from_plaintext (char* filename, int padding)
+board *get_from_plaintext(char *filename, int padding)
 {
   FILE *fp = fopen(filename, "r");
-  if (fp == NULL) error("File not found", 40);
+  if (fp == NULL)
+    error("File not found", 40);
   int sizeofbuf = 100;
-  char* buf = (char*) malloc (sizeof(char) * sizeofbuf);
-  board* the_board = NULL;
+  char *buf = (char *)malloc(sizeof(char) * sizeofbuf);
+  board *the_board = NULL;
   int n_row = 0;
   int n_col = 0;
   while (fgets(buf, sizeofbuf, fp))
   {
     info("Read: %s", buf);
     if (*(buf) != '!') // Skip lines starting with '!'
-    { 
-      int buf_len = strlen(buf)-2; // Remove \n
-      if (the_board == NULL) 
-        the_board = new_board(padding, get_number_of_lines_from_file(
-          fopen(filename, "r") // We have to create a new fp to avoid using the lines left in the actual fp we are using
-        ), buf_len);
+    {
+      int buf_len = strlen(buf) - 2; // Remove \n
+      if (the_board == NULL)
+        the_board = new_board(padding, get_number_of_lines_from_file(fopen(filename, "r") // We have to create a new fp to avoid using the lines left in the actual fp we are using
+                                                                     ),
+                              buf_len);
       for (int n_col = 0; n_col < buf_len; n_col++)
       {
-        info("Setting row: %d, col: %d value %c (%d)\n", n_row, n_col, *(buf+n_col), *(buf+n_col) == '.' ? EMPTY : POPULATED);
-        set_cell(the_board, n_col, n_row, *(buf+n_col) == '.' ? EMPTY : POPULATED);
+        info("Setting row: %d, col: %d value %c (%d)\n", n_row, n_col, *(buf + n_col), *(buf + n_col) == '.' ? EMPTY : POPULATED);
+        set_cell(the_board, n_col, n_row, *(buf + n_col) == '.' ? EMPTY : POPULATED);
       }
       n_row++;
     }
   }
   return the_board;
 }
-
