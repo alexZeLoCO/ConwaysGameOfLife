@@ -134,6 +134,7 @@ int is_valid(char maybe_valid)
 }
 
 // FIXME: This no worky (still)
+// (UPDATE: Somewhat working)
 board *get_from_rle(char *filename, int padding)
 {
   board *out;
@@ -196,6 +197,8 @@ board *get_from_rle(char *filename, int padding)
   }
 
   // show_board(out);
+  free(buf);
+  fclose(fp);
   return out;
 }
 

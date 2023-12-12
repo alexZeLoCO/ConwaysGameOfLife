@@ -41,7 +41,8 @@ int main(int argc, char **argv)
 	set_logging_on(1);
 	struct parameters *the_parameters = parse_args(argc, argv);
 	board *my_board = get_from_file(the_parameters);
-	loop(my_board, the_parameters->n_iters);
-	free(my_board);
+	my_board = loop(my_board, the_parameters->n_iters);
+	free_board(my_board);
+	free(the_parameters);
 	return 0;
 }

@@ -114,13 +114,15 @@ board* loop (board* the_board, int iterations)
 	int different;
 	int current_iteration = 1;
 	do {
-		board* prev_board = copy_board(the_board);
+		free_board(prev_board);
+		prev_board = copy_board(the_board);
 		show(the_board, current_iteration, iterations);
+		free_board(the_board);
 		the_board = run_iteration(prev_board);	
 		different = is_different(the_board, prev_board);
 	} while (current_iteration++ != iterations && different);
-	// } while (current_iteration++ != iterations);
 	show(the_board, current_iteration, iterations);
+	free_board(prev_board);
 	return the_board;
 }
 

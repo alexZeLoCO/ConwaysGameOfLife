@@ -19,6 +19,15 @@ board* new_board (int padding, int n_rows, int n_columns)
 	return the_board;
 }
 
+void free_board (board* the_board)
+{
+	if (the_board != NULL)
+	{
+		if (the_board->cells != NULL) free(the_board->cells);
+		free(the_board);
+	}
+}
+
 void show_board (board* the_board)
 {
 	for (int i = 0 ; i < the_board->n_rows ; i++)
@@ -56,17 +65,5 @@ board* copy_board (board* the_board)
 	int board_size = the_board->n_rows * the_board->n_columns;
 	for (int i = 0 ; i < board_size ; i++) *(out_board->cells+i) = *(the_board->cells+i);
 	return out_board;
-}
-
-board* copy_board_into (board* the_board, board* dst_board)
-{
-	dst_board = new_board(
-		the_board->padding,
-		the_board->n_rows-the_board->padding*2,
-		the_board->n_columns-the_board->padding*2
-	);
-	int board_size = the_board->n_rows * the_board->n_columns;
-	for (int i = 0 ; i < board_size ; i++) *(dst_board->cells+i) = *(the_board->cells+i);
-	return dst_board;
 }
 
